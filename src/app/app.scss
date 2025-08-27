@@ -1,0 +1,46 @@
+.action-bar {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+
+}
+
+main {
+    width: 60vw;
+    margin-left: 20vw;
+}
+
+.search-box {
+    display: inline-flex;
+    width: 100%;
+    background-color: var(--mat-sys-primary-container);
+    padding: 20px 16px 0 16px;
+
+}
+
+.checkbox-container {
+    line-height: 56px;
+    height: 56px;
+}
+
+.button-container {
+    float: right;
+    background-color: var(--mat-sys-primary-container);
+    align-content: center;
+    padding-right: 16px;
+}
+
+nav ,
+mat-toolbar{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: var(--mat-sys-primary-container);
+}
+nav {
+    margin-bottom: 24px;
+}

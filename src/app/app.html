@@ -1,2 +1,39 @@
-<router-outlet />
-Texto
+<nav>
+  <mat-toolbar>
+    <span>{{title()}}</span>
+  </mat-toolbar>
+</nav>
+<main>
+  
+    <section class="action-bar">
+      <div class="search-box">
+        <mat-form-field class="inline-block">
+          <mat-label>{{searchLabel}}</mat-label>
+          <input matInput [formControl]="searchValueControl" type="text"  (input)="onInput($event)">
+          @if (searchValueControl && searchValueControl.value.length > 0) {
+            <button matSuffix matIconButton aria-label="Clear" (click)="resetSearchValue()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+        <section class="checkbox-container">
+          <mat-checkbox  [(ngModel)]="isSearchById" (input)="isSearchByIdChange()">Buscar por Id</mat-checkbox>
+        </section>
+      </div>
+      
+      <section class="button-container">
+        <button matFab extended (click)="openForm()">
+          <mat-icon>add</mat-icon>
+          {{TEXTS_UI.add}}
+        </button>
+      </section>
+    </section>
+    <section class="table"> 
+      <app-hero-table 
+        (editHeroEvent)="handleEditHero($event)"
+        (deleteHeroEvent)="handleDeleteHero($event)"
+        >
+      </app-hero-table>    
+    </section>
+    
+ </main>

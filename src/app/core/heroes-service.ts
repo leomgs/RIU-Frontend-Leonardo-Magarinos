@@ -5,13 +5,19 @@ import { IHero } from './models/hero.model';
   providedIn: 'root'
 })
 export class HeroesService {
-  private heroes = signal<IHero[]>([]);
+  readonly heroesIndex = signal<number>(0);
+  readonly heroes = signal<IHero[]>([]);
   
   getHeroes(): IHero[] {
    return this.heroes(); 
   }
   addHero(hero:IHero) {
-    this.heroes.update(currentArray => [...currentArray, hero]);
+    this.heroesIndex.update(currentIndex => currentIndex + 1);
+    let newHero = {
+      id: this.heroesIndex(),
+      name: hero.name,
+    }
+    this.heroes.update(currentArray => [...currentArray, newHero]);
   }
   removeHeroById(id:number) {
     this.heroes.update(currentArray => [...currentArray.filter(val => val.id !== id)]);
@@ -24,12 +30,11 @@ export class HeroesService {
     return this.heroes().filter(val => val.name.toUpperCase().includes(value.toUpperCase()));
   }
   editHero(hero:IHero) {
-    this.heroes.update(currentArray => {
-      const heroIndex = this.heroes().findIndex(val => val.id === hero.id);
-      if(heroIndex !== -1)
-        currentArray[heroIndex] = {...hero};
-
-      return currentArray;
-    });
+    const heroIndex = this.heroes().findIndex(val => val.id === hero.id);
+    let currentArray = this.heroes();
+    if(heroIndex !== -1){
+      currentArray[heroIndex].name =hero.name;
+      this.heroes.update(array => [...currentArray]);
+    }
   }
 }
