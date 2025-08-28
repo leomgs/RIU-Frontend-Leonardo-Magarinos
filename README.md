@@ -2,6 +2,19 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.0.
 
+## Prerequisites
+- Node.js - v20.19.0 or newer
+- Text editor - We recommend Visual Studio Code
+- Terminal - Required for running Angular CLI commands
+- Development Tool - To improve your development workflow, we recommend the Angular Language Service
+
+## Installation
+Install the project using npm:
+
+```bash
+npm i
+```
+
 ## Running with docker
 1- if you haven't built the docker image, build it with:
 
