@@ -14,6 +14,7 @@ import { HeroesService } from './core/heroes-service';
 import { SharedModule } from './shared/shared-module';
 import { ConfirmDialogData } from './core/models/confirm-dialog.model';
 import { ConfirmDialog } from './shared/confirm-dialog/confirm-dialog';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -43,19 +44,42 @@ export class App {
   constructor(
     private dialogService: MatDialog,
     private heroService: HeroesService
-  ){}
+  ){
+    this.addSearchControlListener();
+  }
+
+  addSearchControlListener() {
+    this.searchValueControl.valueChanges.pipe(
+      debounceTime(300), // Wait for 300ms after last keystroke
+      distinctUntilChanged(), // Only emit if the value has changed
+      switchMap(() => {
+        this.heroService.searchTerm.update(oldValue => this.searchValueControl.value);
+        return this.heroService.search()
+      })
+       // Switch to new search observable
+    ).subscribe((results) => {
+      console.log(results);
+    });
+  }
+  
   onInput(event: Event) {
-    console.log((event.target as HTMLInputElement).value);
+    let value = (event.target as HTMLInputElement).value;
+    console.log('value', value);
     
-    this.searchValueControl.patchValue((event.target as HTMLInputElement).value);
+    if(this.isSearchById()){
+      value = value.replaceAll(/\D+/g,'');
+    }
+    this.searchValueControl.patchValue(value);
   }
   isSearchByIdChange() {
     console.log(this.isSearchById());
     this.searchLabel = this.isSearchById() ? TEXTS_UI.searchByIdLabel: TEXTS_UI.searchLabel;
+    this.heroService.isSearchById.update(oldVal => this.isSearchById());
     this.resetSearchValue();
   }
   resetSearchValue() {
-    this.searchValueControl.reset();
+    this.searchValueControl.patchValue('', {emitEvent: true});
+    this.heroService.search();
   }
   openForm(hero: IHero | null = null){
     const dialogRef = this.dialogService.open(HeroFormDialog, {
@@ -76,7 +100,7 @@ export class App {
       }
     });
   }
-  
+
   handleEditHero(hero: IHero) {
     hero.name = hero.name;
     this.openForm(hero);
