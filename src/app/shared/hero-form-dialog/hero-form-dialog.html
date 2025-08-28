@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Form Heroe</h2>
+<h2 mat-dialog-title>Form Heroe: {{displayActionHeader()}} </h2>
 <mat-dialog-content>
   <mat-form-field>
     <mat-label>Nombre</mat-label>
@@ -6,6 +6,6 @@
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button matButton (click)="onNoClick()">Cancelar</button>
-  <button [disabled]="!isValidName()" matButton [mat-dialog-close]="sendResult()">Agregar</button>
+  <button matButton (click)="onNoClick()">{{TEXTS_UI.cancel}}</button>
+  <button [disabled]="!isValidName()" matButton [mat-dialog-close]="sendResult()">{{displayActionLabel()}}</button>
 </mat-dialog-actions>

@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, Ma
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { IHero } from "../../core/models/hero.model";
+import { TEXTS_UI } from "../../core/constants/texts_ui";
 
 @Component({
   selector: 'hero-form-dialog',
@@ -25,6 +26,7 @@ export class HeroFormDialog {
   readonly data:{hero:IHero | null} = inject(MAT_DIALOG_DATA);
   readonly name = model(this.data.hero ? this.data.hero.name : '');
   readonly id = model(this.data.hero ? this.data.hero.id : 0);
+  TEXTS_UI = TEXTS_UI;
 
   sendResult() {
     const result : IHero = {
@@ -33,10 +35,19 @@ export class HeroFormDialog {
     };
     return result; 
   }
+
   onNoClick(): void {
     this.dialogRef.close();
   }
+
   isValidName() {
     return this.name().trim().length > 0;
+  }
+  
+  displayActionLabel() {
+    return this.id() === 0 ? TEXTS_UI.add: TEXTS_UI.save;
+  }
+  displayActionHeader() {
+    return this.id() === 0 ? TEXTS_UI.add: TEXTS_UI.edit;
   }
 }

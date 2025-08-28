@@ -101,9 +101,25 @@ describe('App Component', () => {
     expect(component.openForm).toHaveBeenCalledWith(hero);
   });
 
-  it('should call removeHeroById on handleDeleteHero()', () => {
-    const hero: IHero = { id: 1, name: 'Superman' };
+   it('should call removeHeroById if confirm dialog result is true', () => {
+    spyOn(dialogService, 'open').and.returnValue({
+      afterClosed: () => of(true)
+    } as any);
+
+    const hero: IHero = { id: 5, name: 'Batman' };
     component.handleDeleteHero(hero);
-    expect(heroService.removeHeroById).toHaveBeenCalledWith(1);
+
+    expect(heroService.removeHeroById).toHaveBeenCalledWith(5);
+  });
+
+  it('should NOT call removeHeroById if confirm dialog result is false', () => {
+    spyOn(dialogService, 'open').and.returnValue({
+      afterClosed: () => of(false)
+    } as any);
+
+    const hero: IHero = { id: 6, name: 'Superman' };
+    component.handleDeleteHero(hero);
+
+    expect(heroService.removeHeroById).not.toHaveBeenCalled();
   });
 });

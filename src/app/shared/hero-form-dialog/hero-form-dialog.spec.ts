@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IHero } from '../../core/models/hero.model';
 import { HeroFormDialog } from './hero-form-dialog';
+import { TEXTS_UI } from '../../core/constants/texts_ui';
 
 class MockDialogRef {
   close = jasmine.createSpy('close');
@@ -67,5 +68,20 @@ describe('HeroFormDialog', () => {
   it('isValidName should return false for empty/whitespace name', () => {
     component.name.set('   ');
     expect(component.isValidName()).toBeFalse();
+  });
+
+  it('displayActionLabel should return save when editing', () => {
+    component.id.set(99)
+    expect(component.displayActionLabel()).toBe(TEXTS_UI.save);
+  });
+
+  it('displayActionHeader should return edit when editing', () => {
+    component.id.set(99)
+    expect(component.displayActionHeader()).toBe(TEXTS_UI.edit);
+  });
+
+  it('displayActionLabel should return add when creating a new hero', () => {
+    component.id.set(0);
+    expect(component.displayActionLabel()).toBe(TEXTS_UI.add);
   });
 });

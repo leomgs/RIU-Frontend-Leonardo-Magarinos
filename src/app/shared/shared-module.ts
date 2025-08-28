@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeroTableComponent } from './table/table';
 import { HeroFormDialog } from './hero-form-dialog/hero-form-dialog';
+import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
 
 
 
@@ -9,7 +10,8 @@ import { HeroFormDialog } from './hero-form-dialog/hero-form-dialog';
   imports: [
     CommonModule,
     HeroFormDialog,
-    HeroTableComponent
+    HeroTableComponent,
+    ConfirmDialog
   ],
   exports: [HeroFormDialog,HeroTableComponent]
 })

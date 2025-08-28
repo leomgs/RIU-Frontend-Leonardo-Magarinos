@@ -12,6 +12,8 @@ import { HeroFormDialog } from './shared/hero-form-dialog/hero-form-dialog';
 import { IHero } from './core/models/hero.model';
 import { HeroesService } from './core/heroes-service';
 import { SharedModule } from './shared/shared-module';
+import { ConfirmDialogData } from './core/models/confirm-dialog.model';
+import { ConfirmDialog } from './shared/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-root',
@@ -56,8 +58,7 @@ export class App {
     this.searchValueControl.reset();
   }
   openForm(hero: IHero | null = null){
-
-     const dialogRef = this.dialogService.open(HeroFormDialog, {
+    const dialogRef = this.dialogService.open(HeroFormDialog, {
       data: {hero},
     });
 
@@ -75,11 +76,24 @@ export class App {
       }
     });
   }
+  
   handleEditHero(hero: IHero) {
     hero.name = hero.name;
     this.openForm(hero);
   }
+
   handleDeleteHero(hero: IHero) {
-    this.heroService.removeHeroById(hero.id);
+    const dialogData: ConfirmDialogData = {
+      title: TEXTS_UI.confirm,
+      message: TEXTS_UI.deleteMessageWithId(hero.id)
+    };   
+    const dialogRef = this.dialogService.open(ConfirmDialog, {
+      data: dialogData,
+      minWidth: '250px'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true)
+        this.heroService.removeHeroById(hero.id);
+    });
   }
 }
