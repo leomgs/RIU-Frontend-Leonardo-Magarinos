@@ -56,23 +56,19 @@ export class HeroesService {
   }
   
   search() {
-    console.log("busqueda heroe", this.searchObject());
     if(this.searchTerm().trim().length === 0) {
       this.heroesDisplay.update(() => this.getHeroes());
     }else if(this.isSearchById()) {
-      console.log("busqueda por id");
       let item: IHero | null  = this.getHeroById(Number(this.searchObject().term));
       this.heroesDisplay.update(() => {
         let result = item ? [item]: [];
         return result;
       });
     } else if(!this.isSearchById()) {
-      console.log("busqueda por contains");
       this.heroesDisplay.update(() => this.getHeroesByString(this.searchTerm() ?? ''));
     }
     const startIndex = this.pageIndex() * this.pageSize();
     const endIndex = startIndex + this.pageSize();
-    console.log("page index",startIndex, endIndex, this.heroesDisplay());
     this.heroesDisplayTotal.update(() => this.heroesDisplay().length);
     this.heroesDisplay.update(() => this.heroesDisplay().slice(startIndex, endIndex))
 

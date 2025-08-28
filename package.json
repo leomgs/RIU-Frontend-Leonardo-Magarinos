@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "docker:build": "docker build --tag riu-frontend-leonardo-magarinos .",
+    "docker:run": "docker compose up --build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

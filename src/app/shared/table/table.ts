@@ -31,15 +31,12 @@ export class HeroTableComponent{
     this.dataSet = computed(this.heroService.heroesDisplay);
   }
   editHero(hero:IHero){
-    console.log("hero to edit:", hero);
     this.editHeroEvent.emit(hero);
   }
   deleteHero(hero:IHero) {
-    console.log("hero to delete:",hero);
     this.deleteHeroEvent.emit(hero);
   }
   onPageChange(event: PageEvent) {
-    console.log("page change",event); 
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.heroService.updatePageSearch(this.pageSize,this.pageIndex);

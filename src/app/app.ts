@@ -65,13 +65,12 @@ export class App implements OnDestroy {
       })
        // Switch to new search observable
     ).subscribe((results) => {
-      console.log(results);
+      console.log("Updated results:", results);
     });
   }
   
   onInput(event: Event) {
     let value = (event.target as HTMLInputElement).value;
-    console.log('value', value);
     
     if(this.isSearchById()){
       value = value.replaceAll(/\D+/g,'');
@@ -79,7 +78,6 @@ export class App implements OnDestroy {
     this.searchValueControl.patchValue(value);
   }
   isSearchByIdChange() {
-    console.log(this.isSearchById());
     this.searchLabel = this.isSearchById() ? TEXTS_UI.searchByIdLabel: TEXTS_UI.searchLabel;
     this.heroService.isSearchById.update(() => this.isSearchById());
     this.resetSearchValue();
@@ -94,16 +92,12 @@ export class App implements OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result:IHero)=> {
-      console.log('The dialog was closed');
       if (result !== undefined) {
         if(result.id === 0) {
           this.heroService.addHero(result);
-          console.log('heroe agregado:', result);
         }else {
           this.heroService.editHero(result);
-          console.log('heroe editado:', result);
         }
-        console.log('heroes actuales:', this.heroService.getHeroes());
       }
     });
   }
