@@ -2,9 +2,13 @@ import { TestBed } from '@angular/core/testing';
 
 import { HeroesService } from './heroes-service';
 import { IHero } from '../../models/hero.model';
+import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
+import { METHODS, URLS } from '../../constants/urls';
 
 describe('HeroesService', () => {
   let service: HeroesService;
+  let httpClientSpy: jasmine.SpyObj<HttpClient>;
   const mockHeroes: IHero[] = [
     { id: 1, name: 'Batman' },
     { id: 2, name: 'Superman' },
@@ -12,12 +16,44 @@ describe('HeroesService', () => {
   ];
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get', 'post', 'put', 'delete']);
+    // default spies return observable
+    httpClientSpy.get.and.returnValue(of({}));
+    httpClientSpy.post.and.returnValue(of({}));
+    httpClientSpy.put.and.returnValue(of({}));
+    httpClientSpy.delete.and.returnValue(of({}));
+    TestBed.configureTestingModule({
+      providers: [
+        HeroesService,
+        { provide: HttpClient, useValue: httpClientSpy }
+      ]
+    });
     service = TestBed.inject(HeroesService);
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should return computed searchObject', () => {
+    service.searchTerm.set('batman');
+    service.pageIndex.set(2);
+    service.pageSize.set(5);
+    service.isSearchById.set(true);
+
+    const searchObj = service.searchObject();
+    expect(searchObj.term).toBe('batman');
+    expect(searchObj.isById).toBeTrue();
+    expect(searchObj.pageIndex).toBe(2);
+    expect(searchObj.pageSize).toBe(5);
+  });
+
+  it('should getHeroes and call fakeApiCall', () => {
+    spyOn(service, 'fakeApiCall');
+    service.heroes.set([{ id: 1, name: 'Superman' }]);
+    const result = service.getHeroes();
+    expect(result.length).toBe(1);
+    expect(service.fakeApiCall).toHaveBeenCalledWith(URLS.getHeroes, METHODS.get);
   });
 
   it('should return empty array initially', () => {
@@ -57,7 +93,7 @@ describe('HeroesService', () => {
 
  it('should search heroes by name substring', () => {
     service.addHero({ id: 0, name: 'Flash' });
-    service.addHero({ id: 0, name: 'Green Lantern' });
+    service.addHero({ id: 0, name: 'Hulk' });
 
     service.searchTerm.set('flash');
     service.isSearchById.set(false);

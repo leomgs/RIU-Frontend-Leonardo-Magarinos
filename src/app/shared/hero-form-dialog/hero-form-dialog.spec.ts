@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IHero } from '../../core/models/hero.model';
 import { HeroFormDialog } from './hero-form-dialog';
@@ -10,78 +10,94 @@ class MockDialogRef {
 
 describe('HeroFormDialog', () => {
   let component: HeroFormDialog;
-  let dialogRef: MockDialogRef;
+  let dialogRefSpy: jasmine.SpyObj<MatDialogRef<HeroFormDialog>>;
+  let fixture: ComponentFixture<HeroFormDialog>;
 
-  beforeEach(() => {
-    dialogRef = new MockDialogRef();
+  //function that creates the component, since we inject the data on the component we need this function so we can test it with different input data
+  function createComponentWithData(heroData: IHero | null) {
+    TestBed.overrideProvider(MAT_DIALOG_DATA, { useValue: { hero: heroData } });
+    fixture = TestBed.createComponent(HeroFormDialog);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  }
+  beforeEach(async () => {
+    dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
 
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
+      imports: [HeroFormDialog],
       providers: [
-        HeroFormDialog,
-        { provide: MatDialogRef, useValue: dialogRef },
+        { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: MAT_DIALOG_DATA, useValue: { hero: null } }
       ]
-    });
-
-    component = TestBed.inject(HeroFormDialog);
+    }).compileComponents();
   });
 
-  it('should initialize with default values when hero is null', () => {
-    expect(component.name()).toBe('');
+  it('should create with hero = null (new hero)', () => {
+    createComponentWithData(null);
+    expect(component).toBeTruthy();
     expect(component.id()).toBe(0);
+    expect(component.name()).toBe('');
   });
 
-  it('should initialize with provided hero data', () => {
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      providers: [
-        HeroFormDialog,
-        { provide: MatDialogRef, useValue: dialogRef },
-        { provide: MAT_DIALOG_DATA, useValue: { hero: { id: 5, name: 'Superman' } as IHero } }
-      ]
-    });
-    const compWithData:HeroFormDialog = TestBed.inject(HeroFormDialog);
-
-    expect(compWithData.name()).toBe('Superman');
-    expect(compWithData.id()).toBe(5);
+  it('should create with existing hero', () => {
+    const hero: IHero = { id: 5, name: 'Spiderman' };
+    createComponentWithData(hero);
+    expect(component.id()).toBe(5);
+    expect(component.name()).toBe('Spiderman');
   });
 
-  it('sendResult should return trimmed hero object', () => {
-    component.name.set('  Batman  ');
-    component.id.set(10);
-
+  it('should send trimmed result', () => {
+    const hero: IHero = { id: 0, name: '  Ironman  ' };
+    createComponentWithData(hero);
     const result = component.sendResult();
-
-    expect(result).toEqual({ id: 10, name: 'Batman' });
+    expect(result.name).toBe('Ironman');
+    expect(result.id).toBe(0);
   });
 
-  it('onNoClick should call dialogRef.close()', () => {
+  it('should close dialog on onNoClick', () => {
+    createComponentWithData(null);
     component.onNoClick();
-    expect(dialogRef.close).toHaveBeenCalled();
+    expect(dialogRefSpy.close).toHaveBeenCalled();
   });
 
-  it('isValidName should return true for non-empty name', () => {
-    component.name.set('wolverine');
-    expect(component.isValidName()).toBeTrue();
+  describe('isValidName', () => {
+    it('should return true for new hero with non-empty name', () => {
+      createComponentWithData(null);
+      component.name.set('Batman');
+      expect(component.isValidName()).toBeTrue();
+    });
+
+    it('should return false for new hero with empty name', () => {
+      createComponentWithData(null);
+      component.name.set('');
+      expect(component.isValidName()).toBeFalse();
+    });
+
+    it('should return false for existing hero with unchanged name', () => {
+      const hero: IHero = { id: 2, name: 'Thor' };
+      createComponentWithData(hero);
+      component.name.set('Thor'); // unchanged
+      expect(component.isValidName()).toBeFalse();
+    });
+
+    it('should return true for existing hero with changed name', () => {
+      const hero: IHero = { id: 2, name: 'Thor' };
+      createComponentWithData(hero);
+      component.name.set('Thor Odinson'); // changed
+      expect(component.isValidName()).toBeTrue();
+    });
   });
 
-  it('isValidName should return false for empty/whitespace name', () => {
-    component.name.set('   ');
-    expect(component.isValidName()).toBeFalse();
-  });
-
-  it('displayActionLabel should return save when editing', () => {
-    component.id.set(99)
-    expect(component.displayActionLabel()).toBe(TEXTS_UI.save);
-  });
-
-  it('displayActionHeader should return edit when editing', () => {
-    component.id.set(99)
-    expect(component.displayActionHeader()).toBe(TEXTS_UI.edit);
-  });
-
-  it('displayActionLabel should return add when creating a new hero', () => {
-    component.id.set(0);
+  it('should display add labels for new hero', () => {
+    createComponentWithData(null);
     expect(component.displayActionLabel()).toBe(TEXTS_UI.add);
+    expect(component.displayActionHeader()).toBe(TEXTS_UI.add);
+  });
+
+  it('should display edit/save labels for existing hero', () => {
+    const hero: IHero = { id: 3, name: 'Hulk' };
+    createComponentWithData(hero);
+    expect(component.displayActionLabel()).toBe(TEXTS_UI.save);
+    expect(component.displayActionHeader()).toBe(TEXTS_UI.edit);
   });
 });

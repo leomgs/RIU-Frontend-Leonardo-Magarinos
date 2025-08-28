@@ -43,14 +43,14 @@ export class HeroesService {
       name: hero.name,
     }
     this.heroes.update(currentArray => [...currentArray, newHero]);
-    //agrego call a search para el caso donde el usuario ingreso un termino de busqueda y al mismo tiempo agrego un nuevo heroe 
+    // added call to search to update results 
     this.search();
     this.fakeApiCall(URLS.hero,METHODS.post);
   }
   
   removeHeroById(id:number) {
     this.heroes.update(currentArray => [...currentArray.filter(val => val.id !== id)]);
-    //agrego call a search para el caso donde el usuario ingreso un termino de busqueda y al mismo tiempo elimino un nuevo heroe 
+    // added call to search to update results
     this.search();
     this.fakeApiCall(URLS.hero,METHODS.delete);
   }

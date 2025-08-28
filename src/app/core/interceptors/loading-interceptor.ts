@@ -5,12 +5,6 @@ import { LoadingService } from '../services/loading/loading-service';
 
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor { 
-  private mockData = [
-    { id: 1, name: 'Batman' },
-    { id: 2, name: 'Superman' },
-    { id: 3, name: 'Wonder Woman' }
-  ];
-  
   constructor(private loadingService:LoadingService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
