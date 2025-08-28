@@ -28,6 +28,8 @@ npm run docker:build
 npm run docker:run
 ```
 
+3- To see the project running with docker, go to: `http://localhost:8080/`
+
 ## Development server
 To start a local development server, run:
 
