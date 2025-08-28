@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HeroTableComponent } from './table';
 import { signal } from '@angular/core';
 import { IHero } from '../../core/models/hero.model';
-import { HeroesService } from '../../core/heroes-service';
+import { HeroesService } from '../../core/services/heroes/heroes-service';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 const mockHeroes: IHero[] = [

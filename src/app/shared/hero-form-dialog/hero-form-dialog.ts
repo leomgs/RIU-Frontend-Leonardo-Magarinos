@@ -43,7 +43,7 @@ export class HeroFormDialog {
   }
 
   isValidName() {
-    return this.name().trim().length > 0;
+    return this.id() === 0 ? this.name().trim().length > 0 : this.name().trim().length > 0 && this.data.hero?.name !== this.name() ;
   }
   
   displayActionLabel() {

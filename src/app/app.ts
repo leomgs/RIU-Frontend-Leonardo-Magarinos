@@ -10,16 +10,17 @@ import { TEXTS_UI } from './core/constants/texts_ui';
 import { MatDialog } from '@angular/material/dialog';
 import { HeroFormDialog } from './shared/hero-form-dialog/hero-form-dialog';
 import { IHero } from './core/models/hero.model';
-import { HeroesService } from './core/heroes-service';
+import { HeroesService } from './core/services/heroes/heroes-service';
 import { SharedModule } from './shared/shared-module';
 import { ConfirmDialogData } from './core/models/confirm-dialog.model';
 import { ConfirmDialog } from './shared/confirm-dialog/confirm-dialog';
 import { debounceTime, distinctUntilChanged, Subscription, switchMap } from 'rxjs';
+import { LoadingSpinner } from "./shared/loading-spinner/loading-spinner";
 
 @Component({
   selector: 'app-root',
   imports: [
-    FormsModule, 
+    FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -29,7 +30,8 @@ import { debounceTime, distinctUntilChanged, Subscription, switchMap } from 'rxj
     MatIcon,
     MatToolbarModule,
     SharedModule,
-  ],
+    LoadingSpinner
+],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

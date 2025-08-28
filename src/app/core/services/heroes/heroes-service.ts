@@ -1,7 +1,9 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { IHero } from './models/hero.model';
-import { Observable, of } from 'rxjs';
-import { ISearch } from './models/search.model';
+import { IHero } from '../../models/hero.model';
+import { ISearch } from '../../models/search.model';
+import { HttpClient } from '@angular/common/http';
+import { debounceTime, take } from 'rxjs';
+import { METHODS, URLS } from '../../constants/urls';
 
 @Injectable({
   providedIn: 'root'
@@ -26,8 +28,12 @@ export class HeroesService {
     return newObj;
    }
   );
+  
+  constructor(private httpClient:HttpClient){}
+
   getHeroes(): IHero[] {
-   return this.heroes(); 
+    this.fakeApiCall(URLS.getHeroes,METHODS.get);
+    return this.heroes(); 
   }
   
   addHero(hero:IHero) {
@@ -39,13 +45,14 @@ export class HeroesService {
     this.heroes.update(currentArray => [...currentArray, newHero]);
     //agrego call a search para el caso donde el usuario ingreso un termino de busqueda y al mismo tiempo agrego un nuevo heroe 
     this.search();
+    this.fakeApiCall(URLS.hero,METHODS.post);
   }
   
   removeHeroById(id:number) {
     this.heroes.update(currentArray => [...currentArray.filter(val => val.id !== id)]);
     //agrego call a search para el caso donde el usuario ingreso un termino de busqueda y al mismo tiempo elimino un nuevo heroe 
     this.search();
-
+    this.fakeApiCall(URLS.hero,METHODS.delete);
   }
   
   search() {
@@ -68,11 +75,14 @@ export class HeroesService {
     console.log("page index",startIndex, endIndex, this.heroesDisplay());
     this.heroesDisplayTotal.update(() => this.heroesDisplay().length);
     this.heroesDisplay.update(() => this.heroesDisplay().slice(startIndex, endIndex))
+
+    this.fakeApiCall(URLS.search,METHODS.post);
     return this.heroesDisplay();
   }
   
   getHeroById(id:number): IHero | null {
     const result = this.heroes().find(val => val.id === id);
+    this.fakeApiCall(URLS.getHeroes,METHODS.get);
     return result ?? null;
   }
   
@@ -94,5 +104,65 @@ export class HeroesService {
   updatePageSearch(pageSize: number,pageIndex:number) {
     this.pageSize.update(() => pageSize);
     this.pageIndex.update(() => pageIndex);
+  }
+
+  fakeApiCall(url:string,method: string, timeout: number = 1000, errorMsg:string = 'error', obj: any = null) {
+    if(method === METHODS.post) {
+      this.httpClient.post(URLS.search, obj)
+      .pipe(
+        take(1),
+        debounceTime(timeout)
+      ).subscribe({
+        next: () => {
+          this.logApiCall(url);
+        },
+        error: () => {
+          console.log(errorMsg);
+        }
+      });
+    } else if(method === METHODS.get){
+      this.httpClient.get(url)
+      .pipe(
+        take(1),
+        debounceTime(timeout)
+      ).subscribe({
+        next: () => {
+          this.logApiCall(url);
+        },
+        error: () => {
+          console.log(errorMsg);
+        }
+      });
+    } else if(method === METHODS.put) {
+      this.httpClient.put(url,obj)
+      .pipe(
+        take(1),
+        debounceTime(timeout)
+      ).subscribe({
+        next: () => {
+          this.logApiCall(url);
+        },
+        error: () => {
+          console.log(errorMsg);
+        }
+      });
+    } else if(method === METHODS.delete) {
+      this.httpClient.delete(url)
+      .pipe(
+        take(1),
+        debounceTime(timeout)
+      ).subscribe({
+        next: () => {
+          this.logApiCall(url);
+        },
+        error: () => {
+          console.log(errorMsg);
+        }
+      });
+    }    
+  }
+  
+  logApiCall(url: string) {
+    console.log("Api called with: ", url);
   }
 }

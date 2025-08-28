@@ -17,7 +17,7 @@
           }
         </mat-form-field>
         <section class="checkbox-container">
-          <mat-checkbox  [(ngModel)]="isSearchById" (input)="isSearchByIdChange()">Buscar por Id</mat-checkbox>
+          <mat-checkbox  [(ngModel)]="isSearchById" (input)="isSearchByIdChange()">{{TEXTS_UI.searchByIdLabel}}</mat-checkbox>
         </section>
       </div>
       
@@ -35,5 +35,5 @@
         >
       </app-hero-table>    
     </section>
-    
  </main>
+ <app-loading-spinner></app-loading-spinner>

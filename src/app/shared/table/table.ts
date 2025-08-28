@@ -1,5 +1,5 @@
 import { Component, computed, EventEmitter, Output, Signal } from '@angular/core';
-import { HeroesService } from '../../core/heroes-service';
+import { HeroesService } from '../../core/services/heroes/heroes-service';
 import { IHero } from '../../core/models/hero.model';
 import { MatTableModule } from '@angular/material/table';
 import { MatIcon } from '@angular/material/icon';

@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { App } from './app';
 import { signal } from '@angular/core';
 import { IHero } from './core/models/hero.model';
-import { HeroesService } from './core/heroes-service';
+import { HeroesService } from './core/services/heroes/heroes-service';
 import { MatDialog } from '@angular/material/dialog';
 import { TEXTS_UI } from './core/constants/texts_ui';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
