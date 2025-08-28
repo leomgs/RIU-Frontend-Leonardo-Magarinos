@@ -1,4 +1,4 @@
-import { Component, model, signal } from '@angular/core';
+import { Component, model, OnDestroy, signal } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -14,7 +14,7 @@ import { HeroesService } from './core/heroes-service';
 import { SharedModule } from './shared/shared-module';
 import { ConfirmDialogData } from './core/models/confirm-dialog.model';
 import { ConfirmDialog } from './shared/confirm-dialog/confirm-dialog';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subscription, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -33,13 +33,13 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnDestroy {
   readonly title = signal('RIU-Frontend-Leonardo-Magarinos');
   isSearchById = model(false);
   searchLabel = TEXTS_UI.searchLabel;
   searchValueControl = new FormControl('', {nonNullable: true});
   TEXTS_UI = TEXTS_UI;
-  
+  private valueChangesSubscription!: Subscription;
 
   constructor(
     private dialogService: MatDialog,
@@ -48,12 +48,17 @@ export class App {
     this.addSearchControlListener();
   }
 
+  ngOnDestroy(): void {
+    if (this.valueChangesSubscription) 
+      this.valueChangesSubscription.unsubscribe();
+  }
+
   addSearchControlListener() {
-    this.searchValueControl.valueChanges.pipe(
+    this.valueChangesSubscription = this.searchValueControl.valueChanges.pipe(
       debounceTime(300), // Wait for 300ms after last keystroke
       distinctUntilChanged(), // Only emit if the value has changed
       switchMap(() => {
-        this.heroService.searchTerm.update(oldValue => this.searchValueControl.value);
+        this.heroService.searchTerm.update(() => this.searchValueControl.value);
         return this.heroService.search()
       })
        // Switch to new search observable
@@ -74,7 +79,7 @@ export class App {
   isSearchByIdChange() {
     console.log(this.isSearchById());
     this.searchLabel = this.isSearchById() ? TEXTS_UI.searchByIdLabel: TEXTS_UI.searchLabel;
-    this.heroService.isSearchById.update(oldVal => this.isSearchById());
+    this.heroService.isSearchById.update(() => this.isSearchById());
     this.resetSearchValue();
   }
   resetSearchValue() {

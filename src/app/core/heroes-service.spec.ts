@@ -22,10 +22,18 @@ describe('HeroesService', () => {
 
   it('should return empty array initially', () => {
     expect(service.getHeroes()).toEqual([]);
+    expect(service.heroesDisplay().length).toBe(0);
   });
 
-  it('should add a hero', () => {
+  it('should add a hero and increment index', () => {
     service.addHero(mockHeroes[0]);
+    const heroes = service.getHeroes();
+
+    expect(heroes.length).toBe(1);
+    expect(heroes[0].name).toBe('Batman');
+    expect(heroes[0].id).toBe(1);
+
+    expect(service.heroesIndex()).toBe(1);
     expect(service.getHeroes()).toEqual([mockHeroes[0]]);
   });
 
@@ -47,9 +55,27 @@ describe('HeroesService', () => {
     expect(hero).toEqual(mockHeroes[0]);
   });
 
-  it('should return null if hero id not found', () => {
-    const hero = service.getHeroById(999);
-    expect(hero).toBeNull();
+ it('should search heroes by name substring', () => {
+    service.addHero({ id: 0, name: 'Flash' });
+    service.addHero({ id: 0, name: 'Green Lantern' });
+
+    service.searchTerm.set('flash');
+    service.isSearchById.set(false);
+
+    const results = service.search();
+    expect(results.length).toBe(1);
+    expect(results[0].name).toBe('Flash');
+  });
+
+  it('should search hero by id', () => {
+    service.addHero({ id: 0, name: 'Aquaman' });
+
+    service.searchTerm.set('1');
+    service.isSearchById.set(true);
+
+    const results = service.search();
+    expect(results.length).toBe(1);
+    expect(results[0].name).toBe('Aquaman');
   });
 
   it('should filter heroes by string', () => {
@@ -68,6 +94,16 @@ describe('HeroesService', () => {
     expect(hero?.name).toBe('Wolverine');
   });
 
+  it('should edit hero and update name', () => {
+    service.addHero({ id: 0, name: 'Robin' });
+    const hero = service.getHeroes()[0];
+
+    service.editHero({ id: hero.id, name: 'Nightwing' });
+    const updatedHero = service.getHeroById(hero.id);
+
+    expect(updatedHero?.name).toBe('Nightwing');
+  });
+
   it('should not edit if hero id does not exist', () => {
     service.addHero({ id: 1, name: 'Deadpool' });
     service.editHero({ id: 999, name: 'Unknown Hero' });
@@ -75,5 +111,20 @@ describe('HeroesService', () => {
     const heroes = service.getHeroes();
     expect(heroes.length).toBe(1);
     expect(heroes[0].name).toBe('Deadpool');
+  });
+
+    it('should update pagination and slice results', () => {
+    service.addHero({ id: 0, name: 'Hero1' });
+    service.addHero({ id: 0, name: 'Hero2' });
+    service.addHero({ id: 0, name: 'Hero3' });
+    service.addHero({ id: 0, name: 'Hero4' });
+
+    service.updatePageSearch(2, 1); // page 1, size 2
+    const results = service.search();
+
+    expect(results.length).toBe(2);
+    expect(results[0].name).toBe('Hero3');
+    expect(results[1].name).toBe('Hero4');
+    expect(service.heroesDisplayTotal()).toBe(4);
   });
 });

@@ -6,6 +6,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { IHero } from "../../core/models/hero.model";
 import { TEXTS_UI } from "../../core/constants/texts_ui";
+import { UppercaseDirective } from "../directives/uppercase";
 
 @Component({
   selector: 'hero-form-dialog',
@@ -19,6 +20,7 @@ import { TEXTS_UI } from "../../core/constants/texts_ui";
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
+    UppercaseDirective,
   ],
 })
 export class HeroFormDialog {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HeroTableComponent } from './table/table';
 import { HeroFormDialog } from './hero-form-dialog/hero-form-dialog';
 import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
+import { UppercaseDirective } from './directives/uppercase';
 
 
 
@@ -11,8 +12,9 @@ import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
     CommonModule,
     HeroFormDialog,
     HeroTableComponent,
-    ConfirmDialog
+    ConfirmDialog,
+    UppercaseDirective,
   ],
-  exports: [HeroFormDialog,HeroTableComponent]
+  exports: [HeroFormDialog,HeroTableComponent,UppercaseDirective]
 })
 export class SharedModule { }
