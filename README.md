@@ -12,7 +12,7 @@ npm run docker:build
 2- Once you have built the docker image, you can run it with: 
 
 ```bash
-npm run docker:build
+npm run docker:run
 ```
 
 ## Development server
