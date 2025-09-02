@@ -1,11 +1,36 @@
 <h2 mat-dialog-title>Form Heroe: {{displayActionHeader()}} </h2>
 <mat-dialog-content>
-  <mat-form-field>
-    <mat-label>Nombre</mat-label>
-    <input matInput appUppercase [(ngModel)]="name" />
-  </mat-form-field>
+  <div class="hero-form-content">
+    <mat-form-field>
+      <mat-label>{{TEXTS_UI.HERO_FORM.name}}</mat-label>
+      <input matInput appUppercase [(ngModel)]="name" required="true"/>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{TEXTS_UI.HERO_FORM.description}}</mat-label>
+      <textarea 
+        matInput
+        [(ngModel)]="description"
+        maxlength="256"
+        rows="6"
+        required="true"
+        ></textarea>
+      <mat-hint align="end">{{description().length}} / 256</mat-hint>
+    </mat-form-field>
+    <div>
+      <mat-label>Powers</mat-label>
+      <mat-chip-listbox 
+        multiple="true" 
+        aria-label="Poderes"
+        [(ngModel)]="powers">
+        @for (power of powersList; track power) {
+          <mat-chip-option [selected]="checkSelected(power)">{{power.value}}</mat-chip-option>
+        }
+      </mat-chip-listbox>
+    </div>
+  </div>
+  
 </mat-dialog-content>
 <mat-dialog-actions>
   <button matButton (click)="onNoClick()">{{TEXTS_UI.cancel}}</button>
-  <button [disabled]="!isValidName()" matButton [mat-dialog-close]="sendResult()">{{displayActionLabel()}}</button>
+  <button [disabled]="!validForm()" matButton [mat-dialog-close]="sendResult()">{{displayActionLabel()}}</button>
 </mat-dialog-actions>

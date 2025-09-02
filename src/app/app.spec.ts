@@ -7,12 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { TEXTS_UI } from './core/constants/texts_ui';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { of } from 'rxjs';
-
- const mockHeroes: IHero[] = [
-  { id: 1, name: 'Batman' },
-  { id: 2, name: 'Superman' }
-];
-
+import { MOCK_HEROES } from './core/constants/mock_data';
 
 describe('App Component', () => {
   let component: App;
@@ -31,9 +26,9 @@ describe('App Component', () => {
     ], {
       searchTerm: { update: jasmine.createSpy('update') },
       isSearchById: { update: jasmine.createSpy('update') },
-      heroesDisplay: signal<IHero[]>(mockHeroes),
-      heroes: signal<IHero[]>(mockHeroes),
-      heroesDisplayTotal: signal<number>(2),
+      heroesDisplay: signal<IHero[]>(MOCK_HEROES),
+      heroes: signal<IHero[]>(MOCK_HEROES),
+      heroesDisplayTotal: signal<number>(MOCK_HEROES.length),
     });
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     
@@ -126,7 +121,7 @@ describe('App Component', () => {
   });
   
   it('should call addHero when result has id=0', () => {
-    const hero: IHero = { id: 0, name: 'Hero' };
+    const hero: IHero = { id: 0, name: 'Hero', description:'', powers:[]};
     dialogSpy.open.and.returnValue({ afterClosed: () => of(hero) } as any);
 
     component.openForm(null);
@@ -135,7 +130,12 @@ describe('App Component', () => {
   });
 
   it('should call editHero when result has id!=0', () => {
-    const hero: IHero = { id: 5, name: 'Edited Hero' };
+    const hero: IHero = { 
+      id: 5,
+      name: 'Edited Hero',
+      description: 'Edited Hero Desc',
+      powers: []
+    };
     dialogSpy.open.and.returnValue({ afterClosed: () => of(hero) } as any);
 
     component.openForm(hero);
@@ -144,7 +144,12 @@ describe('App Component', () => {
   });
 
   it('should handle open edit hero', () => {
-    const hero: IHero = { id: 1, name: 'edited Hero' };
+    const hero: IHero = { 
+      id: 5,
+      name: 'Edited Hero',
+      description: 'Edited Hero Desc',
+      powers: []
+     };
     dialogSpy.open.and.returnValue({ afterClosed: () => of(hero) } as any);
 
     component.handleEditHero(hero);
@@ -163,7 +168,12 @@ describe('App Component', () => {
   });
   
   it('should call removeHeroById when confirm dialog returns true', () => {
-    const hero: IHero = { id: 7, name: 'Deleted hero' };
+    const hero: IHero = { 
+      id: 7,
+      name: 'Deleted hero',
+      description: 'Deleted Hero Desc',
+      powers: []
+    };
     dialogSpy.open.and.returnValue({ afterClosed: () => of(true) } as any);
 
     component.handleDeleteHero(hero);
@@ -172,7 +182,12 @@ describe('App Component', () => {
   });
 
   it('should not call removeHeroById when confirm dialog returns false', () => {
-    const hero: IHero = { id: 8, name: 'KeepMe' };
+    const hero: IHero = { 
+      id: 5,
+      name: 'Edited Hero',
+      description: 'Edited Hero Desc',
+      powers: []
+    };
     dialogSpy.open.and.returnValue({ afterClosed: () => of(false) } as any);
 
     component.handleDeleteHero(hero);

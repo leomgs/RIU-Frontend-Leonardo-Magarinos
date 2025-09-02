@@ -38,9 +38,11 @@ export class HeroesService {
   
   addHero(hero:IHero) {
     this.heroesIndex.update(currentIndex => currentIndex + 1);
-    const newHero = {
+    const newHero: IHero = {
       id: this.heroesIndex(),
       name: hero.name,
+      description: hero.description,
+      powers: [...hero.powers],
     }
     this.heroes.update(currentArray => [...currentArray, newHero]);
     this.search();
@@ -88,7 +90,7 @@ export class HeroesService {
     const heroIndex = this.heroes().findIndex(val => val.id === hero.id);
     const currentArray = this.heroes();
     if(heroIndex !== -1){
-      currentArray[heroIndex].name =hero.name;
+      currentArray[heroIndex] = {...hero};
       this.heroes.update(() => [...currentArray]);
     }
     this.search();

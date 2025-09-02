@@ -1,19 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 
 import { HeroesService } from './heroes-service';
-import { IHero } from '../../models/hero.model';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { METHODS, URLS } from '../../constants/urls';
+import { MOCK_HEROES } from '../../constants/mock_data';
 
 describe('HeroesService', () => {
   let service: HeroesService;
   let httpClientSpy: jasmine.SpyObj<HttpClient>;
-  const mockHeroes: IHero[] = [
-    { id: 1, name: 'Batman' },
-    { id: 2, name: 'Superman' },
-    { id: 3, name: 'Hulk' }
-  ];
 
   beforeEach(() => {
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['get', 'post', 'put', 'delete']);
@@ -50,7 +45,7 @@ describe('HeroesService', () => {
 
   it('should getHeroes and call fakeApiCall', () => {
     spyOn(service, 'fakeApiCall');
-    service.heroes.set([{ id: 1, name: 'Superman' }]);
+    service.heroes.set([MOCK_HEROES[1]]);
     const result = service.getHeroes();
     expect(result.length).toBe(1);
     expect(service.fakeApiCall).toHaveBeenCalledWith(URLS.getHeroes, METHODS.get);
@@ -62,7 +57,7 @@ describe('HeroesService', () => {
   });
 
   it('should add a hero and increment index', () => {
-    service.addHero(mockHeroes[0]);
+    service.addHero(MOCK_HEROES[0]);
     const heroes = service.getHeroes();
 
     expect(heroes.length).toBe(1);
@@ -70,52 +65,52 @@ describe('HeroesService', () => {
     expect(heroes[0].id).toBe(1);
 
     expect(service.heroesIndex()).toBe(1);
-    expect(service.getHeroes()).toEqual([mockHeroes[0]]);
+    expect(service.getHeroes()).toEqual([MOCK_HEROES[0]]);
   });
 
   it('should add multiple heroes', () => {
-    mockHeroes.forEach(hero => service.addHero(hero));
-    expect(service.getHeroes().length).toBe(3);
+    MOCK_HEROES.forEach(hero => service.addHero(hero));
+    expect(service.getHeroes().length).toBe(MOCK_HEROES.length);
   });
 
   it('should remove hero by id', () => {
-    mockHeroes.forEach(hero => service.addHero(hero));
+    MOCK_HEROES.forEach(hero => service.addHero(hero));
     service.removeHeroById(2);
     expect(service.getHeroes().find(h => h.id === 2)).toBeUndefined();
-    expect(service.getHeroes().length).toBe(2);
+    expect(service.getHeroes().length).toBe(MOCK_HEROES.length - 1);
   });
 
   it('should return a hero by id', () => {
-    service.addHero(mockHeroes[0]);
+    service.addHero(MOCK_HEROES[0]);
     const hero = service.getHeroById(1);
-    expect(hero).toEqual(mockHeroes[0]);
+    expect(hero).toEqual(MOCK_HEROES[0]);
   });
 
  it('should search heroes by name substring', () => {
-    service.addHero({ id: 0, name: 'Flash' });
-    service.addHero({ id: 0, name: 'Hulk' });
+    service.addHero(MOCK_HEROES[0]);
+    service.addHero(MOCK_HEROES[2]);
 
-    service.searchTerm.set('flash');
+    service.searchTerm.set('Hulk');
     service.isSearchById.set(false);
 
     const results = service.search();
     expect(results.length).toBe(1);
-    expect(results[0].name).toBe('Flash');
+    expect(results[0].name).toBe('Hulk');
   });
 
   it('should search hero by id', () => {
-    service.addHero({ id: 0, name: 'Aquaman' });
+    service.addHero(MOCK_HEROES[0]);
 
     service.searchTerm.set('1');
     service.isSearchById.set(true);
 
     const results = service.search();
     expect(results.length).toBe(1);
-    expect(results[0].name).toBe('Aquaman');
+    expect(results[0].name).toBe('Batman');
   });
 
   it('should filter heroes by string', () => {
-    mockHeroes.forEach(hero => service.addHero(hero));
+    MOCK_HEROES.forEach(hero => service.addHero(hero));
     const result = service.getHeroesByString('man');
     expect(result.map(h => h.name)).toContain('Batman');
     expect(result.map(h => h.name)).toContain('Superman');
@@ -123,44 +118,45 @@ describe('HeroesService', () => {
   });
 
   it('should edit a hero if exists', () => {
-    service.addHero({ id: 1, name: 'Flash' });
-    service.editHero({ id: 1, name: 'Wolverine' });
+    service.addHero(MOCK_HEROES[0]);
+    service.editHero({ id: 1, name: 'Wolverine',description:'Wolverine desc',powers:[] });
 
     const hero = service.getHeroById(1);
     expect(hero?.name).toBe('Wolverine');
   });
 
   it('should edit hero and update name', () => {
-    service.addHero({ id: 0, name: 'Robin' });
+    service.addHero({ id: 0, name: 'Robin', description:'Robin desc', powers:[] });
     const hero = service.getHeroes()[0];
 
-    service.editHero({ id: hero.id, name: 'Nightwing' });
+    service.editHero({ id: hero.id, name: 'Nightwing',description: 'Not Robin.',powers:[] });
     const updatedHero = service.getHeroById(hero.id);
 
     expect(updatedHero?.name).toBe('Nightwing');
   });
 
   it('should not edit if hero id does not exist', () => {
-    service.addHero({ id: 1, name: 'Deadpool' });
-    service.editHero({ id: 999, name: 'Unknown Hero' });
+    service.addHero({ id: 0, name: 'Deadpool', description:'desc',powers:[] });
+    service.editHero({ id: 999, name: 'Unknown Hero', description: 'desc', powers:[] });
 
     const heroes = service.getHeroes();
     expect(heroes.length).toBe(1);
     expect(heroes[0].name).toBe('Deadpool');
   });
 
-    it('should update pagination and slice results', () => {
-    service.addHero({ id: 0, name: 'Hero1' });
-    service.addHero({ id: 0, name: 'Hero2' });
-    service.addHero({ id: 0, name: 'Hero3' });
-    service.addHero({ id: 0, name: 'Hero4' });
+  it('should update pagination and slice results', () => {
+    service.addHero(MOCK_HEROES[0]);
+    service.addHero(MOCK_HEROES[1]);
+    service.addHero(MOCK_HEROES[2]);
+    service.addHero(MOCK_HEROES[3]);  
 
     service.updatePageSearch(2, 1); 
     const results = service.search();
 
     expect(results.length).toBe(2);
-    expect(results[0].name).toBe('Hero3');
-    expect(results[1].name).toBe('Hero4');
+    console.log(results);
+    expect(results[0].name).toBe(MOCK_HEROES[2].name);
+    expect(results[1].name).toBe(MOCK_HEROES[3].name);
     expect(service.heroesDisplayTotal()).toBe(4);
   });
 });

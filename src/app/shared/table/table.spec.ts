@@ -4,11 +4,7 @@ import { signal } from '@angular/core';
 import { IHero } from '../../core/models/hero.model';
 import { HeroesService } from '../../core/services/heroes/heroes-service';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-
-const mockHeroes: IHero[] = [
-  { id: 1, name: 'Batman' },
-  { id: 2, name: 'Superman' }
-];
+import { MOCK_HEROES } from '../../core/constants/mock_data';
 
 describe('HeroTableComponent', () => {
   let component: HeroTableComponent;
@@ -20,9 +16,9 @@ describe('HeroTableComponent', () => {
       'updatePageSearch',
       'search'
     ], {
-      heroesDisplay: signal<IHero[]>(mockHeroes),
-      heroes: signal<IHero[]>(mockHeroes),
-      heroesDisplayTotal: signal<number>(2),
+      heroesDisplay: signal<IHero[]>(MOCK_HEROES),
+      heroes: signal<IHero[]>(MOCK_HEROES),
+      heroesDisplayTotal: signal<number>(4),
 
     });
 
@@ -46,7 +42,7 @@ describe('HeroTableComponent', () => {
   });
 
   it('should emit editHeroEvent when editHero is called', () => {
-    const hero: IHero = { id: 99, name: 'Flash' };
+    const hero: IHero = MOCK_HEROES[0];
     spyOn(component.editHeroEvent, 'emit');
 
     component.editHero(hero);
@@ -55,7 +51,7 @@ describe('HeroTableComponent', () => {
   });
 
   it('should emit deleteHeroEvent when deleteHero is called', () => {
-    const hero: IHero = { id: 100, name: 'Green Lantern' };
+    const hero: IHero = MOCK_HEROES[1];
     spyOn(component.deleteHeroEvent, 'emit');
 
     component.deleteHero(hero);

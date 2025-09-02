@@ -9,5 +9,9 @@ export const TEXTS_UI = {
     confirm: 'Confirmar',
     delete: 'Borrar',
     deleteMessageWithId: (id:number) => `¿Deseas borrar el item ${id}?`,
-    loadingText: 'Procesando...'
+    loadingText: 'Procesando...',
+    HERO_FORM: {
+        name: 'Nombre',
+        description: 'Description',
+    }
 };

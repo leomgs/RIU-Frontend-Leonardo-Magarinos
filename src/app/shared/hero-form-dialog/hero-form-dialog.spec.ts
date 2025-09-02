@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IHero } from '../../core/models/hero.model';
 import { HeroFormDialog } from './hero-form-dialog';
 import { TEXTS_UI } from '../../core/constants/texts_ui';
+import { MOCK_HEROES } from '../../core/constants/mock_data';
 
 
 describe('HeroFormDialog', () => {
@@ -36,14 +37,14 @@ describe('HeroFormDialog', () => {
   });
 
   it('should create with existing hero', () => {
-    const hero: IHero = { id: 5, name: 'Spiderman' };
+    const hero: IHero = MOCK_HEROES[0];
     createComponentWithData(hero);
-    expect(component.id()).toBe(5);
-    expect(component.name()).toBe('Spiderman');
+    expect(component.id()).toBe(1);
+    expect(component.name()).toBe(MOCK_HEROES[0].name);
   });
 
   it('should send trimmed result', () => {
-    const hero: IHero = { id: 0, name: '  Ironman  ' };
+    const hero: IHero = { id: 0, name: '  Ironman  ', description:'Iron man desc', powers:[] };
     createComponentWithData(hero);
     const result = component.sendResult();
     expect(result.name).toBe('Ironman');
@@ -70,14 +71,15 @@ describe('HeroFormDialog', () => {
     });
 
     it('should return false for existing hero with unchanged name', () => {
-      const hero: IHero = { id: 2, name: 'Thor' };
+      const hero: IHero = { id: 2, name: 'Thor',description:'desc',powers:[] };
       createComponentWithData(hero);
       component.name.set('Thor');
       expect(component.isValidName()).toBeFalse();
     });
 
     it('should return true for existing hero with changed name', () => {
-      const hero: IHero = { id: 2, name: 'Thor' };
+      const hero: IHero = { id: 2, name: 'Thor',description:'desc',powers:[] };
+
       createComponentWithData(hero);
       component.name.set('Thor Odinson');
       expect(component.isValidName()).toBeTrue();
@@ -91,7 +93,7 @@ describe('HeroFormDialog', () => {
   });
 
   it('should display edit/save labels for existing hero', () => {
-    const hero: IHero = { id: 3, name: 'Hulk' };
+    const hero: IHero = { id: 3, name: 'Hulk', description:'Hulk', powers:[] };
     createComponentWithData(hero);
     expect(component.displayActionLabel()).toBe(TEXTS_UI.save);
     expect(component.displayActionHeader()).toBe(TEXTS_UI.edit);
