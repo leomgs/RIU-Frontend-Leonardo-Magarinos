@@ -17,7 +17,7 @@ describe('HeroesService', () => {
 
   beforeEach(() => {
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['get', 'post', 'put', 'delete']);
-    // default spies return observable
+
     httpClientSpy.get.and.returnValue(of({}));
     httpClientSpy.post.and.returnValue(of({}));
     httpClientSpy.put.and.returnValue(of({}));
@@ -155,7 +155,7 @@ describe('HeroesService', () => {
     service.addHero({ id: 0, name: 'Hero3' });
     service.addHero({ id: 0, name: 'Hero4' });
 
-    service.updatePageSearch(2, 1); // page 1, size 2
+    service.updatePageSearch(2, 1); 
     const results = service.search();
 
     expect(results.length).toBe(2);

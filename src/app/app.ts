@@ -1,9 +1,9 @@
-import { Component, model, OnDestroy, signal } from '@angular/core';
+import { Component, model, OnDestroy, signal, inject } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TEXTS_UI } from './core/constants/texts_ui';
@@ -36,6 +36,9 @@ import { LoadingSpinner } from "./shared/loading-spinner/loading-spinner";
   styleUrl: './app.scss'
 })
 export class App implements OnDestroy {
+  private dialogService = inject(MatDialog);
+  private heroService = inject(HeroesService);
+
   readonly title = signal('RIU-Frontend-Leonardo-Magarinos');
   isSearchById = model(false);
   searchLabel = TEXTS_UI.searchLabel;
@@ -43,10 +46,7 @@ export class App implements OnDestroy {
   TEXTS_UI = TEXTS_UI;
   private valueChangesSubscription!: Subscription;
 
-  constructor(
-    private dialogService: MatDialog,
-    private heroService: HeroesService
-  ){
+  constructor(){
     this.addSearchControlListener();
   }
 
@@ -57,13 +57,12 @@ export class App implements OnDestroy {
 
   addSearchControlListener() {
     this.valueChangesSubscription = this.searchValueControl.valueChanges.pipe(
-      debounceTime(300), // Wait for 300ms after last keystroke
-      distinctUntilChanged(), // Only emit if the value has changed
+      debounceTime(300),
+      distinctUntilChanged(),
       switchMap(() => {
         this.heroService.searchTerm.update(() => this.searchValueControl.value);
         return this.heroService.search()
       })
-       // Switch to new search observable
     ).subscribe((results) => {
       console.log("Updated results:", results);
     });
@@ -103,7 +102,6 @@ export class App implements OnDestroy {
   }
 
   handleEditHero(hero: IHero) {
-    hero.name = hero.name;
     this.openForm(hero);
   }
 

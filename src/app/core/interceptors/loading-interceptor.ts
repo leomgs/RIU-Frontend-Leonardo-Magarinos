@@ -1,14 +1,13 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { filter, finalize, Observable, of } from 'rxjs';
 import { LoadingService } from '../services/loading/loading-service';
 
 @Injectable()
-export class LoadingInterceptor implements HttpInterceptor { 
-  constructor(private loadingService:LoadingService) {}
+export class LoadingInterceptor implements HttpInterceptor {
+  private loadingService = inject(LoadingService);
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Match a request (for example GET /api/heroes)
+  intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (req.method === 'POST' || req.method === 'DELETE' || req.method === 'PUT' || req.method === 'GET' ) {
       this.loadingService.addRequest(req.url);
 
@@ -19,6 +18,6 @@ export class LoadingInterceptor implements HttpInterceptor {
         })
       );
     }
-    return next.handle(req); // fallback for other requests
+    return next.handle(req);
   }
 };

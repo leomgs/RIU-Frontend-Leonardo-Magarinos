@@ -4,16 +4,12 @@ import { IHero } from '../../core/models/hero.model';
 import { HeroFormDialog } from './hero-form-dialog';
 import { TEXTS_UI } from '../../core/constants/texts_ui';
 
-class MockDialogRef {
-  close = jasmine.createSpy('close');
-}
 
 describe('HeroFormDialog', () => {
   let component: HeroFormDialog;
   let dialogRefSpy: jasmine.SpyObj<MatDialogRef<HeroFormDialog>>;
   let fixture: ComponentFixture<HeroFormDialog>;
 
-  //function that creates the component, since we inject the data on the component we need this function so we can test it with different input data
   function createComponentWithData(heroData: IHero | null) {
     TestBed.overrideProvider(MAT_DIALOG_DATA, { useValue: { hero: heroData } });
     fixture = TestBed.createComponent(HeroFormDialog);
@@ -76,14 +72,14 @@ describe('HeroFormDialog', () => {
     it('should return false for existing hero with unchanged name', () => {
       const hero: IHero = { id: 2, name: 'Thor' };
       createComponentWithData(hero);
-      component.name.set('Thor'); // unchanged
+      component.name.set('Thor');
       expect(component.isValidName()).toBeFalse();
     });
 
     it('should return true for existing hero with changed name', () => {
       const hero: IHero = { id: 2, name: 'Thor' };
       createComponentWithData(hero);
-      component.name.set('Thor Odinson'); // changed
+      component.name.set('Thor Odinson');
       expect(component.isValidName()).toBeTrue();
     });
   });

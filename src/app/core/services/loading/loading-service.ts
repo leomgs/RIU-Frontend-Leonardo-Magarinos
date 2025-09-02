@@ -6,7 +6,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 export class LoadingService {
   statusEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   status = false;
-  requests: Array<string> = new Array<string>();
+  requests: string[] = new Array<string>();
   addRequest(request: string) {
     this.requests.push(request);
     this.verify()

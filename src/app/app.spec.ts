@@ -181,12 +181,11 @@ describe('App Component', () => {
   });
 
   it('should update searchTerm when control value changes', fakeAsync(() => {
-    // reset spies
     (heroesServiceSpy.searchTerm.update as jasmine.Spy).calls.reset();
     (heroesServiceSpy.search as jasmine.Spy).and.returnValue([]);
 
     component.searchValueControl.setValue('abcd');
-    tick(400); // Advance time by 400ms because of debounce
+    tick(400);
 
     expect(heroesServiceSpy.searchTerm.update).toHaveBeenCalled();
   }));

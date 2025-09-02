@@ -38,7 +38,7 @@ describe('Loading', () => {
 
     expect(service.requests.length).toBe(2);
     expect(service.status).toBeTrue();
-    expect(emitCount).toBe(1); // only first changed status from false -> true
+    expect(emitCount).toBe(1);
   });
 
   it('should delete request and emit false after timeout', fakeAsync(() => {
@@ -48,10 +48,9 @@ describe('Loading', () => {
     service.addRequest('req1');
     service.deleteRequest('req1');
 
-    // still in queue before tick
     expect(service.requests).toContain('req1');
 
-    tick(500); // simulate timeout
+    tick(500);
 
     expect(service.requests).not.toContain('req1');
     expect(service.status).toBeFalse();
@@ -70,6 +69,6 @@ describe('Loading', () => {
 
     expect(service.requests).toContain('req2');
     expect(service.status).toBeTrue();
-    expect(emitCount).toBe(1); // only first transition false -> true
+    expect(emitCount).toBe(1);
   }));
 });

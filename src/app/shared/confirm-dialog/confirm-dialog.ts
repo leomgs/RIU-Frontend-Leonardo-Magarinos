@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { TEXTS_UI } from '../../core/constants/texts_ui';
-import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { ConfirmDialogData } from '../../core/models/confirm-dialog.model';
 import { MatButtonModule } from '@angular/material/button';
 

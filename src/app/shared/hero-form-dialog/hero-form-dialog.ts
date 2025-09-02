@@ -9,7 +9,7 @@ import { TEXTS_UI } from "../../core/constants/texts_ui";
 import { UppercaseDirective } from "../directives/uppercase";
 
 @Component({
-  selector: 'hero-form-dialog',
+  selector: 'app-hero-form-dialog',
   templateUrl: './hero-form-dialog.html',
   imports: [
     MatFormFieldModule,

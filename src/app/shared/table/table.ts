@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, Output, Signal } from '@angular/core';
+import { Component, computed, EventEmitter, Output, Signal, inject } from '@angular/core';
 import { HeroesService } from '../../core/services/heroes/heroes-service';
 import { IHero } from '../../core/models/hero.model';
 import { MatTableModule } from '@angular/material/table';
@@ -20,13 +20,16 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
   styleUrl: './table.scss'
 })
 export class HeroTableComponent{
-  @Output('editHeroEvent') editHeroEvent: EventEmitter<IHero> = new EventEmitter<IHero>();
-  @Output('deleteHeroEvent') deleteHeroEvent: EventEmitter<IHero> = new EventEmitter<IHero>();
+  heroService = inject(HeroesService);
+
+  @Output() editHeroEvent: EventEmitter<IHero> = new EventEmitter<IHero>();
+  @Output() deleteHeroEvent: EventEmitter<IHero> = new EventEmitter<IHero>();
   dataSet!: Signal<IHero[]>;
   displayedColumns: string[] = ['id', 'name', 'actions'];
-  pageSize:number = 3;
-  pageIndex: number = 0;
-  constructor(public heroService:HeroesService){
+  pageSize = 3;
+  pageIndex = 0;
+
+  constructor(){
     this.heroService.updatePageSearch(this.pageSize,this.pageIndex)
     this.dataSet = computed(this.heroService.heroesDisplay);
   }

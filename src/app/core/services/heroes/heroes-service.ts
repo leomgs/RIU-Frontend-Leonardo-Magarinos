@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal, inject } from '@angular/core';
 import { IHero } from '../../models/hero.model';
 import { ISearch } from '../../models/search.model';
 import { HttpClient } from '@angular/common/http';
@@ -9,6 +9,8 @@ import { METHODS, URLS } from '../../constants/urls';
   providedIn: 'root'
 })
 export class HeroesService {
+  private httpClient = inject(HttpClient);
+
   readonly heroesIndex = signal<number>(0);
   readonly heroes = signal<IHero[]>([]);
   readonly heroesDisplay = signal<IHero[]>([]);
@@ -28,8 +30,6 @@ export class HeroesService {
     return newObj;
    }
   );
-  
-  constructor(private httpClient:HttpClient){}
 
   getHeroes(): IHero[] {
     this.fakeApiCall(URLS.getHeroes,METHODS.get);
@@ -38,19 +38,17 @@ export class HeroesService {
   
   addHero(hero:IHero) {
     this.heroesIndex.update(currentIndex => currentIndex + 1);
-    let newHero = {
+    const newHero = {
       id: this.heroesIndex(),
       name: hero.name,
     }
     this.heroes.update(currentArray => [...currentArray, newHero]);
-    // added call to search to update results 
     this.search();
     this.fakeApiCall(URLS.hero,METHODS.post);
   }
   
   removeHeroById(id:number) {
     this.heroes.update(currentArray => [...currentArray.filter(val => val.id !== id)]);
-    // added call to search to update results
     this.search();
     this.fakeApiCall(URLS.hero,METHODS.delete);
   }
@@ -59,9 +57,9 @@ export class HeroesService {
     if(this.searchTerm().trim().length === 0) {
       this.heroesDisplay.update(() => this.getHeroes());
     }else if(this.isSearchById()) {
-      let item: IHero | null  = this.getHeroById(Number(this.searchObject().term));
+      const item: IHero | null  = this.getHeroById(Number(this.searchObject().term));
       this.heroesDisplay.update(() => {
-        let result = item ? [item]: [];
+        const result = item ? [item]: [];
         return result;
       });
     } else if(!this.isSearchById()) {
@@ -88,12 +86,11 @@ export class HeroesService {
   
   editHero(hero:IHero) {
     const heroIndex = this.heroes().findIndex(val => val.id === hero.id);
-    let currentArray = this.heroes();
+    const currentArray = this.heroes();
     if(heroIndex !== -1){
       currentArray[heroIndex].name =hero.name;
       this.heroes.update(() => [...currentArray]);
     }
-    //agrego call a search para el caso donde el usuario ingreso un termino de busqueda y al mismo tiempo edito un nuevo heroe 
     this.search();
   }
   
@@ -102,7 +99,7 @@ export class HeroesService {
     this.pageIndex.update(() => pageIndex);
   }
 
-  fakeApiCall(url:string,method: string, timeout: number = 1000, errorMsg:string = 'error', obj: any = null) {
+  fakeApiCall(url:string,method: string, timeout = 1000, errorMsg = 'error', obj: unknown = null) {
     if(method === METHODS.post) {
       this.httpClient.post(URLS.search, obj)
       .pipe(

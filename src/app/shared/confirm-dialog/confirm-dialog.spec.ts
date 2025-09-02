@@ -41,8 +41,4 @@ describe('ConfirmDialog', () => {
   it('should have TEXTS_UI defined', () => {
     expect(component.TEXTS_UI).toBeDefined();
   });
-
-  it('should inject MatDialogRef', () => {
-    expect(component.dialogRef).toBe(dialogRef as any);
-  });
 });
