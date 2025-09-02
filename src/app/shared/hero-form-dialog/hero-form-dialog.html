@@ -17,10 +17,10 @@
       <mat-hint align="end">{{description().length}} / 256</mat-hint>
     </mat-form-field>
     <div>
-      <mat-label>Powers</mat-label>
+      <mat-label>{{TEXTS_UI.HERO_FORM.powers}}</mat-label>
       <mat-chip-listbox 
         multiple="true" 
-        aria-label="Poderes"
+        aria-label="{{TEXTS_UI.HERO_FORM.powers}}"
         [(ngModel)]="powers">
         @for (power of powersList; track power) {
           <mat-chip-option [selected]="checkSelected(power)">{{power.value}}</mat-chip-option>

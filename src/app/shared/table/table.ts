@@ -6,6 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { TEXTS_UI } from '../../core/constants/texts_ui';
 
 @Component({
   selector: 'app-hero-table',
@@ -25,13 +26,24 @@ export class HeroTableComponent{
   editHeroEvent = output<IHero>();
   deleteHeroEvent = output<IHero>();
   dataSet!: Signal<IHero[]>;
-  displayedColumns: string[] = ['id', 'name', 'actions'];
+  displayedColumns: string[] = ['id', 'name','description','powers', 'actions'];
   pageSize = 3;
   pageIndex = 0;
+  TEXTS_UI = TEXTS_UI;
 
   constructor(){
     this.heroService.updatePageSearch(this.pageSize,this.pageIndex)
     this.dataSet = computed(this.heroService.heroesDisplay);
+  }
+
+  parsePowers(hero:IHero) {
+    let result = 'Ninguno';
+    if(hero.powers.length > 0) {
+      result = '';
+      hero.powers.forEach((power) => result = result + power + ', ');
+      result = result.substring(0,result.length - 2);
+    }
+    return result;
   }
   editHero(hero:IHero){
     this.editHeroEvent.emit(hero);

@@ -4,8 +4,14 @@ tr{
 .mat-column-id {
     width: 50px;
 }
+.mat-column-description {
+    width:70%
+}
 .mat-column-name {
-    width:90%
+    width:10%;
+}
+.mat-column-powers {
+    width:10%;
 }
 .actions-container {
     display: inline-flex;

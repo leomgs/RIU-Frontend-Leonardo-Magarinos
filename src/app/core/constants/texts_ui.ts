@@ -12,6 +12,7 @@ export const TEXTS_UI = {
     loadingText: 'Procesando...',
     HERO_FORM: {
         name: 'Nombre',
-        description: 'Description',
+        description: 'Descripción',
+        powers: 'Poderes'
     }
 };
